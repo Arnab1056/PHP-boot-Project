@@ -1,13 +1,11 @@
 <?php
-require 'db_connection.php';
-session_start();
+require '../db_connection.php';
+require '../middleware/AuthMiddleware.php';
 
-if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role_id'], [1,2,3])) { // Only Editors and Contributors can access this page
-    header("Location: index.php");
-    exit;
-}
+AuthMiddleware::requireAuth();
+AuthMiddleware::requireRole([1, 2, 3]); // Admin, Editor, and Contributor can access this page
 
-$postId = intval($_GET['post_id']); // Get the post ID from the query string
+$postId = intval($_GET['post_id']);
 $stmt = $conn->prepare("SELECT id, title, content FROM blog_posts WHERE id = ?");
 $stmt->bind_param("i", $postId);
 $stmt->execute();

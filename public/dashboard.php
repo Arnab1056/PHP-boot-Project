@@ -1,12 +1,12 @@
 <?php
+require '../db_connection.php';
+
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit;
 }
-
-require 'db_connection.php';
 
 $userName = htmlspecialchars($_SESSION['user_name']); // Sanitize output
 $roleId = $_SESSION['role_id'];
@@ -86,10 +86,12 @@ if ($roleId == 1 || $roleId == 2) {
                         <td><?= htmlspecialchars($user['email']) ?></td>
                         <td><?= htmlspecialchars($user['role_id']) ?></td>
                         <td>
-                            <form method="POST" action="manage_user.php" class="d-inline">
-                                <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
-                                <button type="submit" name="action" value="edit" class="btn btn-warning btn-sm">Edit</button>
-                            </form>
+                            <?php if ($roleId == 1 || $roleId == 2): // Admin and Editor can edit users ?>
+                                <form method="GET" action="edit_user.php" class="d-inline">
+                                    <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                                    <button type="submit" class="btn btn-warning btn-sm">Edit</button>
+                                </form>
+                            <?php endif; ?>
                             <?php if ($roleId == 1): // Only Admin can delete users ?>
                                 <form method="POST" action="manage_user.php" class="d-inline">
                                     <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
@@ -137,9 +139,7 @@ if ($roleId == 1 || $roleId == 2) {
         </table>
     <?php endif; ?>
 
-    <?php if ($roleId == 4): // User-specific content ?>
-        <a href="blog_posts.php" class="btn btn-primary mt-4">Go to Blog Posts</a>
-    <?php endif; ?>
+ 
 </div>
 </body>
 </html>

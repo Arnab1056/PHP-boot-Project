@@ -1,42 +1,38 @@
 <?php
+require '../controllers/BlogController.php';
+
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit;
 }
-
-require 'db_connection.php';
 
 $userName = htmlspecialchars($_SESSION['user_name']); // Sanitize output
 $roleId = $_SESSION['role_id'];
 $userId = $_SESSION['user_id'];
 
+$blogController = new BlogController($conn);
+
 // Handle blog post deletion for Admins and Contributors
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete' && in_array($roleId, [1, 3])) {
     $postId = intval($_POST['post_id']);
-    $stmt = $conn->prepare("DELETE FROM blog_posts WHERE id = ?");
-    $stmt->bind_param("i", $postId);
-    $stmt->execute();
-    $successMessage = "Blog post deleted successfully!";
+    if ($blogController->deletePost($postId)) {
+        $successMessage = "Blog post deleted successfully!";
+    }
 }
 
 // Handle blog post submission for Admins, Users, and Contributors
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add' && in_array($roleId, [1, 3, 4])) {
     $title = htmlspecialchars(trim($_POST['title']));
     $content = htmlspecialchars(trim($_POST['content']));
-    $stmt = $conn->prepare("INSERT INTO blog_posts (user_id, title, content) VALUES (?, ?, ?)");
-    $stmt->bind_param("iss", $userId, $title, $content);
-    $stmt->execute();
-    $successMessage = "Blog post created successfully!";
+    if ($blogController->addPost($userId, $title, $content)) {
+        $successMessage = "Blog post created successfully!";
+    }
 }
 
 // Fetch all blog posts
-$blogResult = $conn->query("SELECT blog_posts.id, blog_posts.title, blog_posts.content, users.name AS author, blog_posts.created_at 
-                            FROM blog_posts 
-                            JOIN users ON blog_posts.user_id = users.id 
-                            ORDER BY blog_posts.created_at DESC");
-$blogPosts = $blogResult->fetch_all(MYSQLI_ASSOC);
+$blogPosts = $blogController->fetchAllPosts();
 ?>
 
 <!DOCTYPE html>

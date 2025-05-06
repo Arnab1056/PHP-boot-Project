@@ -1,13 +1,17 @@
 <?php
-require 'db_connection.php';
-session_start();
+require '../db_connection.php';
+require '../middleware/AuthMiddleware.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 1) {
-    header("Location: index.php");
+AuthMiddleware::requireAuth();
+AuthMiddleware::requireRole([1, 2]); // Allow Admins and Editors to access this page
+
+$userId = intval($_GET['user_id'] ?? 0);
+
+if (!$userId) {
+    header("Location: dashboard.php");
     exit;
 }
 
-$userId = intval($_GET['user_id']);
 $stmt = $conn->prepare("SELECT id, name, email, role_id, is_approved FROM users WHERE id = ?");
 $stmt->bind_param("i", $userId);
 $stmt->execute();

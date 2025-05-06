@@ -1,5 +1,5 @@
 <?php
-require 'db_connection.php';
+require __DIR__ . '/db_connection.php';
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -19,9 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['role_id'] = $user['role_id'];
 
             if ($user['role_id'] == 1) {
-                header("Location: dashboard.php");
+                header("Location: public/dashboard.php");
             } else {
-                header("Location: dashboard.php");
+                header("Location: public/dashboard.php");
             }
             exit;
         } else {
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="register.php">Register</a>
+                    <a class="nav-link" href="public/register.php">Register</a>
                 </li>
             </ul>
         </div>

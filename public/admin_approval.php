@@ -1,22 +1,25 @@
 <?php
-require 'db_connection.php';
+require '../db_connection.php';
+require '../controllers/AdminApprovalController.php';
+require '../middleware/AuthMiddleware.php';
+
+AuthMiddleware::requireAuth();
+AuthMiddleware::requireRole([1]); // Only Admin can access this page
+
+$message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = intval($_POST['user_id']);
     $action = $_POST['action'];
 
-    if ($action === 'approve') {
-        $stmt = $conn->prepare("UPDATE users SET is_approved = 1 WHERE id = ?");
-    } elseif ($action === 'reject') {
-        $stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
+    if (AdminApprovalController::handleApproval($userId, $action)) {
+        $message = $action === 'approve' ? "User approved successfully!" : "User rejected successfully!";
+    } else {
+        $message = "An error occurred while processing the request.";
     }
-
-    $stmt->bind_param("i", $userId);
-    $stmt->execute();
 }
 
-$result = $conn->query("SELECT id, name, email, role_id FROM users WHERE is_approved = 0");
-$pendingUsers = $result->fetch_all(MYSQLI_ASSOC);
+$pendingUsers = AdminApprovalController::getPendingUsers();
 ?>
 
 <!DOCTYPE html>
@@ -35,7 +38,7 @@ $pendingUsers = $result->fetch_all(MYSQLI_ASSOC);
                     <a class="nav-link" href="dashboard.php">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="logout.php?redirect=index">Logout</a>
+                    <a class="nav-link" href="logout.php">Logout</a>
                 </li>
             </ul>
         </div>
@@ -43,6 +46,9 @@ $pendingUsers = $result->fetch_all(MYSQLI_ASSOC);
 </nav>
 <div class="container mt-5">
     <h2>Admin Approval</h2>
+    <?php if (!empty($message)): ?>
+        <div class="alert alert-info"><?= htmlspecialchars($message) ?></div>
+    <?php endif; ?>
     <table class="table table-bordered">
         <thead>
             <tr>

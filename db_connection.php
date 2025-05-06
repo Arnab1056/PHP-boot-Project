@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
-$username = "root"; 
-$password = ""; 
+$username = "root";
+$password = "";
 $database = "rbac_system";
 
 $conn = new mysqli($servername, $username, $password, $database);

@@ -1,5 +1,7 @@
 <?php
-require 'controllers/RegisterController.php';
+require '../controllers/RegisterController.php';
+require '../views/header.php';
+require '../views/navbar.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
@@ -7,36 +9,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
     $role_id = $_POST['role'];
 
-
     $message = RegisterController::register($name, $email, $password, $role_id);
     echo $message;
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Register</title>
-</head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">RBAC System</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="index.php">Login</a>
-                </li>
-                <?php if (isset($_SESSION['role_id']) && $_SESSION['role_id'] == 1): ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin_approval.php">Admin Approval</a>
-                    </li>
-                <?php endif; ?>
-            </ul>
-        </div>
-    </div>
-</nav>
 <div class="container mt-5">
     <div class="card mx-auto" style="max-width: 30rem;">
         <div class="card-body">
@@ -68,5 +45,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 </div>
-</body>
-</html>
+
+<?php require '../views/footer.php'; ?>
