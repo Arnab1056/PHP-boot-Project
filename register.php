@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="login.php">Login</a>
+                    <a class="nav-link" href="index.php">Login</a>
                 </li>
                 <?php if (isset($_SESSION['role_id']) && $_SESSION['role_id'] == 1): ?>
                     <li class="nav-item">

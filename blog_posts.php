@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -55,7 +55,7 @@ $blogPosts = $blogResult->fetch_all(MYSQLI_ASSOC);
                     <a class="nav-link" href="dashboard.php">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="logout.php?redirect=login">Logout</a>
+                    <a class="nav-link" href="logout.php?redirect=index">Logout</a>
                 </li>
             </ul>
         </div>

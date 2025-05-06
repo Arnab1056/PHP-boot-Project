@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['role_id'] = $user['role_id'];
 
             if ($user['role_id'] == 1) {
-                header("Location: admin_approval.php");
+                header("Location: dashboard.php");
             } else {
                 header("Location: dashboard.php");
             }

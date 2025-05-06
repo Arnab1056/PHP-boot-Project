@@ -3,7 +3,7 @@ require 'db_connection.php';
 session_start();
 
 if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role_id'], [1,2,3])) { // Only Editors and Contributors can access this page
-    header("Location: login.php");
+    header("Location: index.php");
     exit;
 }
 

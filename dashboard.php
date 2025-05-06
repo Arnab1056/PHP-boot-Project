@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -20,12 +20,11 @@ $roleContent = [
 
 $content = $roleContent[$roleId] ?? "Welcome! Your role is not recognized.";
 
-// Fetch only approved users if the role is Admin
-if ($roleId == 1) {
+// Fetch users and blog posts for Admin and Editor roles
+if ($roleId == 1 || $roleId == 2) {
     $result = $conn->query("SELECT id, name, email, role_id, is_approved FROM users WHERE is_approved = 1");
     $users = $result->fetch_all(MYSQLI_ASSOC);
 
-    // Fetch all blog posts
     $blogResult = $conn->query("SELECT blog_posts.id, blog_posts.title, blog_posts.content, users.name AS author 
                                 FROM blog_posts 
                                 JOIN users ON blog_posts.user_id = users.id");
@@ -45,7 +44,7 @@ if ($roleId == 1) {
         <a class="navbar-brand" href="#">RBAC System</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link" href="blog_posts.php">Post Feed</a>
                 </li>
                 <?php if ($roleId == 1): // Admin role ?>
@@ -54,7 +53,7 @@ if ($roleId == 1) {
                     </li>
                 <?php endif; ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="logout.php?redirect=login">Logout</a>
+                    <a class="nav-link" href="logout.php?redirect=index">Logout</a>
                 </li>
             </ul>
         </div>
@@ -67,7 +66,7 @@ if ($roleId == 1) {
     </div>
     <p><?= htmlspecialchars($content) ?></p>
 
-    <?php if ($roleId == 1): // Admin-specific content ?>
+    <?php if ($roleId == 1 || $roleId == 2): // Admin and Editor-specific content ?>
         <h3 class="mt-4">Manage Users</h3>
         <table class="table table-bordered">
             <thead>
@@ -91,10 +90,12 @@ if ($roleId == 1) {
                                 <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                                 <button type="submit" name="action" value="edit" class="btn btn-warning btn-sm">Edit</button>
                             </form>
-                            <form method="POST" action="manage_user.php" class="d-inline">
-                                <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
-                                <button type="submit" name="action" value="delete" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
+                            <?php if ($roleId == 1): // Only Admin can delete users ?>
+                                <form method="POST" action="manage_user.php" class="d-inline">
+                                    <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                                    <button type="submit" name="action" value="delete" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            <?php endif; ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
