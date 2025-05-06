@@ -1,9 +1,8 @@
 <?php
 require 'db_connection.php';
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $userId = $_POST['user_id'];
+    $userId = intval($_POST['user_id']);
     $action = $_POST['action'];
 
     if ($action === 'approve') {
@@ -61,11 +60,11 @@ $pendingUsers = $result->fetch_all(MYSQLI_ASSOC);
                     <td><?= htmlspecialchars($user['role_id']) ?></td>
                     <td>
                         <form method="POST" class="d-inline">
-                            <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                            <input type="hidden" name="user_id" value="<?= htmlspecialchars($user['id']) ?>">
                             <button type="submit" name="action" value="approve" class="btn btn-success btn-sm">Approve</button>
                         </form>
                         <form method="POST" class="d-inline">
-                            <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                            <input type="hidden" name="user_id" value="<?= htmlspecialchars($user['id']) ?>">
                             <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm">Reject</button>
                         </form>
                     </td>

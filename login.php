@@ -3,7 +3,7 @@ require 'db_connection.php';
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
+    $email = strtolower(trim($_POST['email'])); // Convert email to lowercase and trim whitespace
     $password = $_POST['password'];
 
     $stmt = $conn->prepare("SELECT id, name, password, role_id, is_approved FROM users WHERE email = ?");
@@ -48,8 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <li class="nav-item">
                     <a class="nav-link" href="register.php">Register</a>
                 </li>
-                
-             
             </ul>
         </div>
     </div>
